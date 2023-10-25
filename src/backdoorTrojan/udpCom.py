@@ -9,8 +9,8 @@
 #
 # Created:     2019/01/15
 # Version:     v_0.2
-# Copyright:   
-# License:     
+# Copyright:   Copyright (c) 2019 LiuYuancheng
+# License:     MIT License
 #-----------------------------------------------------------------------------
 """ Program Design:
     
