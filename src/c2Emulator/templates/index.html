@@ -1,0 +1,85 @@
+{% extends 'mgmbase.html' %}
+
+{% block title %} User Action scheduler Monitor {% endblock %}
+
+{% block style%}
+<style>
+  /* Make the image fully responsive 
+  .carousel-inner img {
+    width: 100%;
+    height: 50%;
+  }*/
+</style>
+
+{% endblock %}
+
+{% block mgmContent %}
+
+
+
+<ul class="list-group">
+
+  <li class="list-group-item">
+    <h3> User Emulator Introduction</h3>
+  </li>
+
+  <li class="list-group-item">
+    <h4> <span class="badge badge-secondary">Introduction </span> </h4>
+    <p> <b> The Cluster Users Emulator is a multiple users’ action emulation system running in a
+        network/compute cluster system which can satisfy the customers’ requirement about:</b>
+    </p>
+
+    <p><b> &#149; Network-traffic / node activities / group-users interactive action generation. </b></p>
+    <p><b> &#149; Robotic process / tasks automation. </b></p>
+    <p><b> &#149; System tasks’ process monitoring and control. </b></p>
+  </li>
+
+
+  <li class="list-group-item">
+
+    <div class="row">
+      <div class="col-sm-8">
+        <h4> <span class="badge badge-secondary"> System Structure </span> </h4>
+        <p><b> The Cluster User Emulator system can be deployed on single compute node, real network
+            system, VMs based SDN (software defined network). The product contents three parts,
+            the “User actions repository”, the “User action emulator/scheduler” and the “scheduler
+            monitor hub”. (The 3 parts relationship is shown in the below system deployment
+            structure diagram)</b></p>
+
+        <dl>
+          <dt>User Actions Repository</dt>
+          <dd> &#149; Provide the library APIs repository to simulate simple user’s normal
+            activities/events under hardware, network, OS and App level. (Such as starting
+            the online meeting, send/receive email, upload/download files, edit MS-Office doc,
+            On/Off Windows FW, watch online/offline video…)</dd>
+
+          <dt>User Action Emulator</dt>
+          <dd> &#149; A RPA type scheduler to invoke the lib from action repository to build more
+            complex “Human type” activities and run the tasks based on the users’ timeline
+            playbook configuration.</dd>
+
+          <dt> Scheduler Monitor Hub </dt>
+          <dd> &#149; A no-centralized monitor website host which provides plug and play tasks
+            state view function for the customer to monitor and control all/parts of their
+            schedulers in a computers/servers cluster. </dd>
+        </dl>
+      </div>
+      <div class="col-sm-4">
+        <img src="{{url_for('static', filename='img/RM_diagram_system.png')}}" align="left" class="img-thumbnail" />
+
+      </div>
+    </div>
+
+  </li>
+
+  <li class="list-group-item">
+    <h4> <span class="badge badge-secondary"> Current version : </span>
+      <a type="button" class="btn btn-outline-secondary btn-sm"
+        href="https://github.com/LiuYuancheng/Windows_User_Simulator" target="_blank">
+        <span class="badge badge-light"> v_0.2</span>
+        <span class="spinner-grow spinner-grow-sm"> </span> [Project Github link]
+      </a>
+    </h4>
+  </li>
+</ul>
+{% endblock %}
