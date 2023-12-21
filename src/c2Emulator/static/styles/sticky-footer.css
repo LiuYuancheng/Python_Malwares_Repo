@@ -1,0 +1,21 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+
+body {
+  margin-bottom: 60px; /* Margin bottom by footer height */
+}
+
+
+/* Custom page CSS
+ * Not required for template or sticky footer method.
+ * -------------------------------------------------- */
+
+.container {
+  width: auto;
+  max-width: 680px;
+  max-height: 200px;
+  padding: 0 15px;
+}
+.container .text-muted {
+  margin: 20px 0;
+}
