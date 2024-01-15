@@ -1,0 +1,8 @@
+{
+    "MDBUS": {
+        "type": "MDBUS",
+        "ipaddress": "127.0.0.1",
+        "port": 502,
+        "targetSum" : "testPlc[127.0.0.1]:502"
+    }
+}

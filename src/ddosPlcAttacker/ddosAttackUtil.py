@@ -1,0 +1,222 @@
+#-----------------------------------------------------------------------------
+# Name:        DDos attacker Utils.py
+#
+# Purpose:     This module is the util functions module to import different kind 
+#              of DDoS attack actor into the related attack thread then hook into 
+#              the DDoS attack program.
+#
+# Author:      Yuancheng Liu
+#
+# Created:     2023/10/02
+# Version:     v_0.1
+# Copyright:   Copyright (c) 2023 LiuYuancheng
+# License:     MIT License
+#-----------------------------------------------------------------------------
+
+import time
+import threading
+
+# import the attack actor lib file.
+import udpCom
+import tcpCom
+from SSHconnector import sshConnector
+from networkServiceProber import networkServiceProber
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThread(threading.Thread):
+    """ Every detailed attack actor will be hooked in a attack thread or inherit 
+        from a attack thread to run parallel with the main thread.
+    """
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        threading.Thread.__init__(self)
+        self.parent = parent
+        self.threadID = threadID
+        self.repeatTime = repeatTime
+        self.attackActor = attackActor
+        self.attackStart = False
+        self.atkCount = 0
+        self.terminate = False
+
+    def initAttacker(self, paramDict):
+        """ The attack thread needs to over write this function and put the attack
+            actor initialization code here.
+        """
+        return None
+
+    def _runAttack(self):
+        """ The attack thread needs to over write this function to put the attack 
+            execution code here.
+        """
+        pass 
+
+    #-----------------------------------------------------------------------------
+    def run(self):
+        print('Attack Thread %s : Ready for DDoS attack' %str(self.threadID))
+        while not self.terminate:
+            if self.attackStart:
+                self._runAttack()
+                self.atkCount += 1 
+            else:
+                time.sleep(0.1)
+        print('Attack Thread %s : Terminated.' %str(self.threadID))
+
+    #-----------------------------------------------------------------------------
+    def getAttackState(self):
+        return (self.attackStart, self.atkCount)
+
+    #-----------------------------------------------------------------------------
+    def setAttacker(self, attacker):
+        self.attackActor = attacker
+
+    #-----------------------------------------------------------------------------
+    def setStartAtk(self, atkFlg):
+        self.attackStart = atkFlg
+        if self.attackStart : 
+            print("Attack Thread %s : start attack..." %str(self.threadID))
+            self.atkCount = 0
+        else:
+            print("Attack Thread %s : pause attack" %str(self.threadID))
+
+    #-----------------------------------------------------------------------------
+    def stop(self):   
+        try:
+            if self.attackActor:self.attackActor.stop()
+        except Exception as err:
+            print("The attack actor stop() function is not callable. ")
+            print("Error: %s" %str(err))
+        finally:
+            self.attackStart = False 
+            self.terminate = True
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadSSH(attackThread):
+    """ Attack thread to init a SSH-connector to implement the ssh connection."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+        pass
+
+    def initAttacker(self, paramDict):
+        self.attackActor = sshConnector(None,
+                                        paramDict['ipaddress'],
+                                        paramDict['username'],
+                                        paramDict['password'])
+        # add the command execution list
+        for cmdStr in paramDict['cmdlines']:
+            self.attackActor.addCmd(cmdStr, self.testRplFunction)
+        self.attackActor.InitTunnel()
+        self.cmdInterval = paramDict['cmdinterval']
+
+    def _runAttack(self):
+        self.attackActor.runCmd(interval=self.cmdInterval)
+
+    def testRplFunction(self, replyStr, showReply=True):
+        if showReply:
+            print("Got reply: %s" % str(replyStr))
+        return
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadHttp(attackThread):
+    """ Attack thread to init a url opening client. """
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+
+    def initAttacker(self, paramDict):
+        self.attackActor = networkServiceProber()
+        self.paramDict = paramDict
+        self.showResult = False
+
+    def _runAttack(self):
+        if str(self.paramDict['type']).upper() == 'URL':
+            # Opening URL to get the server response.
+            rst = self.attackActor.checkUrlsConn(self.paramDict['urlList'])
+            if self.showResult:print(rst)
+        elif str(self.paramDict['type']).upper() == 'URL2':
+            for reqDict in self.paramDict['urlList']:
+                url = reqDict['url']
+                requestType = reqDict['type']
+                parm = reqDict['parm']
+                self.attackActor.checkHttpRquest(requestType, url, parm)
+        else:
+            print("The target type [%s] is not support" %str(self.paramDict['type']))
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadNtp(attackThread):
+    """ Attack thread to send network time synchronization request."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+
+    def initAttacker(self, paramDict):
+        self.attackActor = networkServiceProber()
+        self.paramDict = paramDict
+
+    def _runAttack(self):
+        for ntpServer in self.paramDict['urlList']:
+            try:
+                self.attackActor.checkNtpConn(ntpServer)
+            except Exception as err: 
+                print("Time synchronization error: %s" %str(err))
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadFtp(attackThread):
+    """ Attack thread to send the file server connection request."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+
+    def initAttacker(self, paramDict):
+        self.attackActor = networkServiceProber()
+        self.paramDict = paramDict
+
+    def _runAttack(self):
+        for ftpServer in self.paramDict:
+            self.attackActor.checkFtpConn(ftpServer)
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadUDP(attackThread):
+    """ Attack thread to send UDP message to target."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+
+    def initAttacker(self, paramDict):
+        ipAddr = paramDict['ipaddress']
+        udpPort = int(paramDict['port'])
+        self.attackActor = udpCom.udpClient((ipAddr, udpPort))
+        self.paramDict = paramDict
+        self.showResp = False
+
+    def _runAttack(self):
+        respFlg = self.paramDict['respFlg']
+        for msg in self.paramDict['msg']:
+            resp = self.attackActor.sendMsg(msg, resp=respFlg)
+            if self.showResp: print(resp)
+
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+class attackThreadTCP(attackThread):
+    """ Attack thread to send TCP message to target."""
+
+    def __init__(self, parent, threadID, attackActor, repeatTime=None) -> None:
+        super().__init__(parent, threadID, attackActor)
+
+    def initAttacker(self, paramDict):
+        ipAddr = paramDict['ipaddress']
+        udpPort = int(paramDict['port'])
+        self.attackActor = tcpCom.tcpClient((ipAddr, udpPort))
+        self.paramDict = paramDict
+        self.showResp = False
+
+    def _runAttack(self):
+        respFlg = self.paramDict['respFlg']
+        for msg in self.paramDict['msg']:
+            resp = self.attackActor.sendMsg(msg, resp=respFlg)
+            if self.showResp: print(resp)
