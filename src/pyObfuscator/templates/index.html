@@ -1,0 +1,83 @@
+{% extends 'mgmbase.html' %}
+
+{% block title %} Threats To MITRE AI-LLM Mapper {% endblock %}
+
+{% block style%} <style></style> {% endblock %}
+
+{% block mgmContent %}
+
+<ul class="list-group">
+
+  <li class="list-group-item">
+    <h3> Threats To MITRE(<b class="text-primary">CWD</b>, <b class="text-warning" >ATT&CK</b>) AI-LLM Mapper </h3>
+    <p> The primary objective of this program is to leverage AI-LLM technology to streamline the processing
+       of human language-based threat scenario documents, including technical blogs, CTI reports, online threats 
+       introduction materials and cyber attack training notes. The goal is to succinctly summarize the attack flow 
+       path outlined within such materials via mapping the attack behaviors to the MITRE-ATT&CK Matrix and matching 
+       the vulnerabilities to the MITRE-CWE Tree.  </p>
+  </li>
+
+  <li class="list-group-item">
+    <h4> <span class="badge badge-secondary">Introduction </span> </h4>
+    <p> Our objective is to develop an AI LLM-based tool/library that simplifies the analysis of human language 
+        threat scenario descriptions found in technical blogs, CTI reports, and cyber attack training notes. This 
+        tool will allow user to pass in the original human threats report contents and automate the generation of 
+        MITRE ATT&CK Matrix mappings and MITRE CWE Tree matches process. To achieve this, the program will undertake 
+        the following tasks:
+    </p>
+    <p> &#149; <b>Cyber Attack Behaviors </b>: The program will parse the document to extract cyber attack 
+        behaviors, delineating each behavior individually. Subsequently, it will map these behaviors to the MITRE 
+        ATT&CK Matrix, thereby discerning the associated attack tactics and techniques. </p>
+    <p> &#149; <b>Detecting Vulnerabilities</b>: Additionally, the program will identify vulnerabilities mentioned 
+        within the threat descriptions. It will then cross-reference these vulnerabilities with the MITRE Common 
+        Weakness Enumeration (CWE) to establish corresponding matches. </p>
+  </li>
+
+  <li class="list-group-item">
+
+    <div class="row">
+      <div class="col-sm-6">
+        <h4> <span class="badge badge-secondary"> Program workflow </span> </h4>
+        <p><b>  The tool will proceed the input threats report through the following steps: </b></p>
+
+        <dl>
+          <dt>Material Summarization</dt>
+          <dd> &#149; Leveraging AI LLM, we will analyze lengthy threat descriptions to summarize attack 
+            scenarios and attack path descriptions.</dd>
+
+          <dt>Attack Behavior Parsing</dt>
+          <dd> &#149; The summarized threats will be input into the LLM Attack Behavior Analyzer to 
+            extract a list of individual attack behaviors.</dd>
+
+          <dt>Attack Behavior Mapping</dt>
+          <dd> &#149; Each individual behavior will be mapped to relevant techniques in the MITRE 
+            ATT&CK matrix.</dd>
+          
+          <dt>Result Verification</dt>
+          <dd> &#149; Different AI LLM models will be employed to verify if the results match the 
+            original contents of the threat material.</dd>
+
+          <dt>Report Generation</dt>
+          <dd> &#149; Based on verified results, the program will generate mapping reports for further 
+            research and development purposes.</dd>
+  
+        </dl>
+      </div>
+      <div class="col-sm-6">
+        <img src="{{url_for('static', filename='img/systemWorkflow.png')}}" align="left" class="img-thumbnail" />
+      </div>
+    </div>
+
+  </li>
+
+  <li class="list-group-item">
+    <h4> <span class="badge badge-secondary"> Current version : </span>
+      <a type="button" class="btn btn-outline-secondary btn-sm"
+        href="https://github.com/LiuYuancheng/Threats_2_MITRE_AI_Mapper" target="_blank">
+        <span class="badge badge-light"> v_0.1.2</span>
+        <span class="spinner-grow spinner-grow-sm"> </span> [Project GitHub Link]
+      </a>
+    </h4>
+  </li>
+</ul>
+{% endblock %}
