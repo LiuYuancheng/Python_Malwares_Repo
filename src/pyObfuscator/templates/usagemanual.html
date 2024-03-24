@@ -1,0 +1,81 @@
+{% extends 'mgmbase.html' %}
+
+{% block title %} Threats To MITRE Configuration {% endblock %}
+
+{% block style%} {% endblock %}
+
+{% block mgmContent %}
+
+<ul class="list-group">
+    <li class="list-group-item">
+        <h3> Usage Manual </h3>
+    </li>
+
+    <li class="list-group-item">
+
+        <div id="accordion">
+
+            <div class="card">
+                <div class="card-header">
+                  <a class="btn " data-bs-toggle="collapse" href="#collapse1">
+                    <b > Run the obfuscator via command interface </b>
+                  </a>
+                </div>
+                <div id="collapse1" class="collapse show" data-bs-parent="#accordion">
+                  <div class="card-body">
+                      
+                    <h4> Run the obfuscator via command interface </h4>
+                    <p> &#149; &nbsp Step1: Run the command interface program via command:<code> python pyObfuscator.py </code></p>
+                    <p> &#149; &nbsp Step2: Select mode 0, then follow the step to input the python program need to be obfuscate,
+                        the obfuscated code will be saved in file <code> obfuscateCode.py </code> , the user can 
+                        change the file's name and replace the original file.</p>
+                        <img src="{{url_for('static', filename='img/consoleRun.png')}}" align="left" class="img-thumbnail" />
+                    <p> - </p>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="card">
+                <div class="card-header">
+                  <a class="btn " data-bs-toggle="collapse" href="#collapse2">
+                    <b > Run the obfuscation encoder via web interface </b>
+                  </a>
+                </div>
+                <div id="collapse2" class="collapse" data-bs-parent="#accordion">
+                  <div class="card-body">
+                      
+                    <h4> Run the obfuscation encoder via web interface</h4>
+                    <p> &#149; &nbsp Step1: Run the web host program via command: <code> python pyObfuscatorApp.py </code></p>
+                    <p> &#149; &nbsp Step2: Select the <code>Obfuscation Encoder</code> from the left guide menu, 
+                        and follow the below steps to obfuscate the source code:</p>
+                        <img src="{{url_for('static', filename='img/useEncoder.png')}}" align="left" class="img-thumbnail" />
+                    <p> - </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">
+                  <a class="btn " data-bs-toggle="collapse" href="#collapse3">
+                    <b > Run the obfuscation decoder via web interface </b>
+                  </a>
+                </div>
+                <div id="collapse3" class="collapse" data-bs-parent="#accordion">
+                  <div class="card-body">
+                      
+                    <h4> Run the obfuscation decoder via web interface</h4>
+                    <p> &#149; &nbsp Step1: Run the web host program via command: <code> python pyObfuscatorApp.py </code></p>
+                    <p> &#149; &nbsp Step2: Select the <code>Obfuscation Encoder</code> from the left guide menu, 
+                        and follow the below steps to obfuscate the source code:</p>
+                        <img src="{{url_for('static', filename='img/useDecoder.png')}}" align="left" class="img-thumbnail" />
+                    <p> - </p>
+                  </div>
+                </div>
+              </div>
+
+        </div>
+    </li>
+</ul>
+
+{% endblock %}

@@ -8,19 +8,19 @@
 
 <ul class="list-group">
     <li class="list-group-item">
-        <h3> Obfuscate <b class="text-warning">  Decoder </b></h3>
+        <h3> Obfuscation <b class="text-warning">  Decoder </b></h3>
     </li>
 
     <li class="list-group-item">
         <div class="row">
+
             <div class="col-sm-6">
                 <form>
                     <div id="content_2" style="display: block">
                         <label for="contents"> <b> Copy the obfuscated bytes data (b'***') here: </b></label> <p></p>
-
                         <input class="form-check-input" type="checkbox" value="checked" id="removeCmt" name="removeCmt" checked >
                         <label class="form-check-label">
-                          <code> Remove the comments </code>
+                          <code> Remove the code comments </code>
                         </label>
                         &nbsp
                         <button type="submit" class="btn btn-success btn-sm"> Run Obfuscation Decode </button>
@@ -30,8 +30,8 @@
                     </div>
                 </form>
             </div>
-            <div class="col-sm-6">
 
+            <div class="col-sm-6">
                 <label for="contents"> <b>Orignal Python Source Code : </b> </label> <p></p>
                 <button  class="btn btn-primary btn-sm" onclick="copyCode()" > Copy Code </button>
                 &nbsp
@@ -51,28 +51,24 @@
 <script>
     $(document).ready(function() {
        $('form').submit(function(event) {
-          event.preventDefault();
-          $.ajax({
-             type: 'POST',
-             url: '/decodesubmit',
-             data: $('form').serialize(),
-             //success: function() {
-               // $('#codeContents').val('');
-              //  alert('Form submitted!');
-             //}
-          });
-       });
-
-       var socket = io();
-       socket.on('connect', function () {
-        socket.emit('cli_request', { data: 'I\'m connected!' });
+        event.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '/decodesubmit',
+            // submit all the contents in the form
+            data: $('form').serialize(),
+            });
         });
 
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('cli_request', { data: 'socketIO connected!' });
+        });
         // Test response received from server is handled here
         socket.on('decoderesult', function (msg) {
             console.log(msg.data);
             document.getElementById('resultContents').innerHTML = msg.data 
-            })
+        });
     });
 
     function copyCode() {
@@ -84,11 +80,11 @@
         navigator.clipboard.writeText(copyText.value);
       }
 
-      function cleanCode() {
+    function cleanCode() {
         // Get the text field
         var copyText = document.getElementById("resultContents");
         copyText.innerHTML=""
-      }
+    }
 
  </script>
 

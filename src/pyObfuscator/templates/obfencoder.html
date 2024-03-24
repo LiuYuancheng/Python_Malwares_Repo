@@ -17,7 +17,7 @@
                 <form>
                     <div id="content_2" style="display: block">
                         <label for="contents"> <b> Copy the python source code in below text area : </b></label> <p></p>
-                        <code> Appended random len: </code> &nbsp
+                        <code> Appended random len : </code> &nbsp
                         <input id="randomLen" name="randomLen" type="number" min="0" step="1" data-bind="value:replyNumber" value="0" style="width: 10%;"> 
                         &nbsp
                         <button type="submit" class="btn btn-success btn-sm"> Run Obfuscation Encode</button>
@@ -48,29 +48,25 @@
 
 <script>
     $(document).ready(function() {
-       $('form').submit(function(event) {
-          event.preventDefault();
-          $.ajax({
-             type: 'POST',
-             url: '/encodesubmit',
-             data: $('form').serialize(),
-             //success: function() {
-               // $('#codeContents').val('');
-              //  alert('Form submitted!');
-             //}
-          });
-       });
+        $('form').submit(function(event) {
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '/encodesubmit',
+                data: $('form').serialize(),
+            });
+        });
 
-       var socket = io();
-       socket.on('connect', function () {
-        socket.emit('cli_request', { data: 'I\'m connected!' });
+        var socket = io();
+        socket.on('connect', function () {
+            socket.emit('cli_request', { data: 'I\'m connected!' });
         });
 
         // Test response received from server is handled here
         socket.on('encoderesult', function (msg) {
             console.log(msg.data);
             document.getElementById('resultContents').innerHTML = msg.data 
-            })
+        });
     });
 
     function copyCode() {
@@ -80,13 +76,13 @@
         copyText.setSelectionRange(0, 99999); // For mobile devices
         // Copy the text inside the text field
         navigator.clipboard.writeText(copyText.value);
-      }
+    }
 
-      function cleanCode() {
+    function cleanCode() {
         // Get the text field
         var copyText = document.getElementById("resultContents");
         copyText.innerHTML=""
-      }
+    }
 
  </script>
 
